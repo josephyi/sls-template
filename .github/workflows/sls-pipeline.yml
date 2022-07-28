@@ -1,0 +1,51 @@
+name: SLS Pipeline
+
+on: 
+  workflow_call:
+    inputs:
+      aws-region:
+        default: 'us-east-1'
+        required: false
+        type: string
+      node-version:
+        default: '16'
+        required: false
+        type: string
+      sls-stage:
+        required: true
+        type: string
+      deploy:
+        default: false
+        required: false
+        type: boolean
+    secrets:
+      role-to-assume:
+        required: true
+
+permissions:
+  contents: read
+  id-token: write      
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: 'npm'
+      - run: npm ci
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: ${{ inputs.aws-region }}
+          role-to-assume: ${{ secrets.role-to-assume }}
+      - if: ${{ inputs.deploy == false }}
+        run: |
+          npx sls package \
+          --stage ${{ inputs.sls-stage }}
+      - if: inputs.deploy
+        run: |
+          npx sls deploy \
+          --stage ${{ inputs.sls-stage }}

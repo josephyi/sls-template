@@ -1,0 +1,14 @@
+name: Push Workflow
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: ./.github/workflows/sls-pipeline.yml
+    with:
+      deploy: ${{ github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch' }}
+      sls-stage: dev
+    secrets:
+      role-to-assume: ${{ secrets.ROLE_TO_ASSUME}}

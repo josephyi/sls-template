@@ -1,0 +1,23 @@
+service: sls-template
+
+frameworkVersion: '3'
+
+custom:
+  newRelic:
+    accountId: ${ssm:/newrelic/accountId, ''}
+    apiKey: ${ssm:/newrelic/apiKey, ''}
+    enableFunctionLogs: true
+    enableIntegration: true
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+
+functions:
+  example:
+    handler: src/handler.hello
+    runtime: nodejs16.x
+    url: true
+
+plugins:
+  - serverless-newrelic-lambda-layers
