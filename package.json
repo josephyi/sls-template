@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/josephyi/sls-template#readme",
   "devDependencies": {
-    "serverless": "^3.21.0",
+    "serverless": "^3.19.0",
     "serverless-newrelic-lambda-layers": "^3.3.5"
   }
 }
